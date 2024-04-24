@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Cliente {
     public static final int PUERTO = 3400;
@@ -33,9 +34,12 @@ public class Cliente {
         //Se ejecuta el protocolo por el lado del cliente
         ProtocoloCliente.procesar(stdIn,lector,escritor);
 
+        //ProtocoloCliente.procesar(stdIn,lector,escritor);
+
         //Se cierran los flujos y el socket
         socket.close();
         escritor.close();
         lector.close();
+
     }
 }

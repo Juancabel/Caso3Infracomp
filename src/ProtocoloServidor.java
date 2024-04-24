@@ -11,10 +11,11 @@ public class ProtocoloServidor {
 
     //Lee el flujo de entrada
     inputLine = pIn.readLine();
-    System.out.println("Entrada a procesar: " + inputLine);
+    Integer num = Integer.parseInt(inputLine);
+    System.out.println("Entrada a procesar: " + num);
 
     //Procesa la entrada
-    outputLine = inputLine;
+    outputLine = String.valueOf(num-1);
 
     //Escribe en el flujo de salida
     pOut.println(outputLine);
