@@ -1,6 +1,9 @@
 import java.math.BigInteger;
+import java.security.*;
+import javax.crypto.*;
 
 public class calcNumeros {
+    
     private static String STRING_P = "00:a8:82:fa:56:2f:55:59:51:04:4c:1d:5f:8f:b1:"+
     "c7:92:5f:51:13:ca:a7:86:93:e6:07:4e:86:cb:ff:"+
     "8a:c7:ae:0e:49:b2:19:3b:83:03:4e:b9:12:76:ff:"+
@@ -41,4 +44,6 @@ public class calcNumeros {
         }
         return digit;
     }
+
+
 }

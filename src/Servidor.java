@@ -43,7 +43,7 @@ public class Servidor {
                 lector.close();
                 socket.close();
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
