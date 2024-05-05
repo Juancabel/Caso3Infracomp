@@ -6,21 +6,6 @@ import java.util.Random;
 
 public class ProtocoloCliente {
 
-    //Esto es un place Holder
-    private Random rnd = new Random();
-    private static final BigInteger p = calcNumeros.P;
-    private static final BigInteger g = calcNumeros.G;
-    private BigInteger x = new BigInteger(1024, rnd);
-
-
-    private BigInteger y = g.modPow(x, p);
-
-
-    private ProtocoloCliente(){
-        System.out.println(y);
-    }
-
-
     public static void procesar(BufferedReader stdIn, BufferedReader pIn, PrintWriter pOut)
     throws IOException,Exception{
         //Recibe el mensaje del usuario
