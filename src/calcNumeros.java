@@ -3,6 +3,8 @@ import java.security.*;
 import javax.crypto.*;
 
 public class calcNumeros {
+
+    private static final String ALGORITMO_ASIMETRICO = "RSA";
     
     private static String STRING_P = "00:a8:82:fa:56:2f:55:59:51:04:4c:1d:5f:8f:b1:"+
     "c7:92:5f:51:13:ca:a7:86:93:e6:07:4e:86:cb:ff:"+
@@ -45,5 +47,35 @@ public class calcNumeros {
         return digit;
     }
 
+    public static byte[] cifrarAsimetrico(Key llave, String algoritmo, String texto){
+        byte[] textoCifrado;
+
+        try {
+            Cipher cifrador = Cipher.getInstance(algoritmo);
+            byte[] textoClaro = texto.getBytes();
+
+            cifrador.init(Cipher.ENCRYPT_MODE, llave);
+            textoCifrado = cifrador.doFinal(textoClaro);
+
+            return textoCifrado;
+        } catch (Exception e) {
+            System.out.println("Excepción: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static byte[] desifrarAsimetrico(Key llave, String algoritmo, byte[] texto){
+        byte[] textoClaro;
+
+        try {
+            Cipher cifrador = Cipher.getInstance(algoritmo);
+            cifrador.init(Cipher.DECRYPT_MODE, llave);
+            textoClaro = cifrador.doFinal(texto);
+        } catch (Exception e) {
+            System.out.println("Excepción: " + e.getMessage());
+            return null;
+        }
+        return textoClaro;
+    }
 
 }
