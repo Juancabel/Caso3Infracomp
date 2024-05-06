@@ -23,13 +23,13 @@ public class Cliente {
             escritor = new PrintWriter(socket.getOutputStream(),true);
             lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
+            
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);
         }
 
         BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
-
         //Se ejecuta el protocolo por el lado del cliente
         ProtocoloCliente.procesar(stdIn,lector,escritor);
 
