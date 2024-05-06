@@ -64,7 +64,7 @@ public class ProtocoloCliente {
         PrivateKey privateKey = keyPair.getPrivate();
         PublicKey publicKey = keyPair.getPublic();
 
-        //Recibe el mensaje del usuario
+        
         System.out.println("Comenzando Proceso...");
         String privKey = Base64.getEncoder().encodeToString(privateKey.getEncoded());
 
@@ -73,6 +73,7 @@ public class ProtocoloCliente {
         
         String line;
         while ((line = pIn.readLine()) != null){
+            long startTime = System.nanoTime();
             String signature = line;
             byte[] signature_bytes = convertSringByte(signature);
             Signature publicSignature = Signature.getInstance("SHA256withRSA");
@@ -81,12 +82,13 @@ public class ProtocoloCliente {
             boolean isCorrect = publicSignature.verify(signature_bytes);
             if(isCorrect){
                 pOut.println("OK");
-                break;
             }
             else{
-                pOut.println("ERROR");;
-                break;                
+                pOut.println("ERROR");;                
             }
+            long endTime = System.nanoTime() - startTime;
+            System.out.println("Tiempo en nanosegundos para verificar la firma: " + endTime + "\n");
+            break;
         }
         while ((line = pIn.readLine()) != null){
             String data = line;
@@ -131,7 +133,12 @@ public class ProtocoloCliente {
         x = new BigInteger(1024, rnd);
         if (p.equals(p_moc) && g.equals(g_moc) && y.equals(y_moc) && iv.equals(iv_moc)){
             pOut.println("OK");
+
+            long startTime = System.nanoTime();
             pOut.println(g.modPow(x, p));
+            long endTime = System.nanoTime() - startTime;
+            System.out.println("Tiempo en nanosegundos para calcular Gy: " + endTime + "\n");
+
             z = y.modPow(x, p);
         }
         else{
@@ -178,12 +185,22 @@ public class ProtocoloCliente {
             IvParameterSpec ivParameterSpec = new IvParameterSpec(bytes);
             Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParameterSpec);
+
+            long startTime = System.nanoTime();
             byte[] query_cifrado = cipher.doFinal(query.getBytes());
+            long endTime = System.nanoTime() - startTime;
+            System.out.println("Tiempo en nanosegundos para cifrar la consulta: " + endTime + "\n");
+
             String query_message = convertByteString(query_cifrado);
             Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
             SecretKeySpec secret_key = new SecretKeySpec(k_ab2, "HmacSHA256");
             sha256_HMAC.init(secret_key);
+
+            startTime = System.nanoTime();
             byte[] hmac_cifrado = sha256_HMAC.doFinal(query.getBytes());
+            endTime = System.nanoTime() - startTime;
+            System.out.println("Tiempo en nanosegundos para generar el codigo de autenticación: " + endTime + "\n");
+
             String hmac_message = convertByteString(hmac_cifrado);
             pOut.println(query_message+";"+hmac_message);
             break;
@@ -192,7 +209,6 @@ public class ProtocoloCliente {
             String message = line;
             String [] rta_hmac = message.split(";");
             byte [] rta_cifrada = convertSringByte(rta_hmac[0]);
-            byte [] hmac = convertSringByte(rta_hmac[0]);
             SecretKeySpec secretKeySpec = new SecretKeySpec(k_ab1, "AES");
             byte[] bte = iv.toByteArray();
             byte[] bytes = new byte[16];

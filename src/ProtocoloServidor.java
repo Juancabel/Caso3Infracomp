@@ -58,6 +58,7 @@ public class ProtocoloServidor {
         PrivateKey privateKey = null;
 
         while ((line = pIn.readLine()) != null) {
+            long startTime = System.nanoTime();
             String privKey = line;
             try {
                 String privateK = privKey;
@@ -65,10 +66,12 @@ public class ProtocoloServidor {
                 PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateBytes);
                 KeyFactory keyFactory = KeyFactory.getInstance("RSA");
                 privateKey = keyFactory.generatePrivate(keySpec);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                break;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            long endTime = System.nanoTime() - startTime;
+            System.out.println("Tiempo en nanosegundos para generar la firma: " + endTime + "\n");
+            break;
          }
          while ((line = pIn.readLine()) != null){
             String reto = line;
@@ -155,6 +158,7 @@ public class ProtocoloServidor {
             }
         }
         while ((line = pIn.readLine()) != null){
+            
             SecretKeySpec secretKeySpec = new SecretKeySpec(k_ab1, "AES");
             byte[] bte = iv.toByteArray();
             byte[] bytes = new byte[16];
@@ -163,14 +167,22 @@ public class ProtocoloServidor {
             String qh = line;
             String [] queryhmac = qh.split(";");
             byte [] query_cifrado = convertSringByte(queryhmac[0]);
-            byte [] hmac = convertSringByte(queryhmac[1]);
+
+
+            long startTime = System.nanoTime();
             Cipher cipherDecrypt = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            long endTime = System.nanoTime() - startTime;
+            System.out.println("Tiempo en nanosegundos para descifrar la consulta: " + endTime + "\n");
+
+
             cipherDecrypt.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
             byte[] decrypted = cipherDecrypt.doFinal(query_cifrado);
             String query_real = new String(decrypted);
             Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
             SecretKeySpec secret_key = new SecretKeySpec(k_ab2, "HmacSHA256");
             sha256_HMAC.init(secret_key);
+
+            startTime = System.nanoTime();
             byte[] hmac_real = sha256_HMAC.doFinal(query_real.getBytes());
             if(convertByteString(hmac_real).equals(queryhmac[1])){
                 Integer ans = Integer.parseInt(query_real) - 2;
@@ -185,6 +197,9 @@ public class ProtocoloServidor {
             else{
                 throw new Exception("Hubo un error de verificacion con el HMAC del mensaje");
             }
+
+            endTime = System.nanoTime() - startTime;
+            System.out.println("Tiempo en nanosegundos para verificar el codigo de autenticación: " + endTime + "\n");
         }
     }
 }

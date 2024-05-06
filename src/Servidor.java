@@ -21,6 +21,7 @@ public class Servidor {
             e.printStackTrace();
             System.exit(-1);
         }
+        int numThreads = 0;
 
         while (continuar){
 
@@ -30,22 +31,10 @@ public class Servidor {
 
             Socket socket = ss.accept();
 
-            try {
-                PrintWriter escritor = new PrintWriter(socket.getOutputStream(),true);
-                BufferedReader lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            ThreadServidor thread = new ThreadServidor(socket, numThreads);
+            numThreads++;
 
-                //Ejecuta el protocolo del lado del servidor
-                ProtocoloServidor.procesar(lector, escritor);
-
-                //ProtocoloServidor.procesar(lector, escritor);
-
-                escritor.close();
-                lector.close();
-                socket.close();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            thread.start();
         }
     }
     
